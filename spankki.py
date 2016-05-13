@@ -8,6 +8,21 @@ import cleantransactions
 
 #regular expressions can be tested easily in http://regex101.com/#python by using following flags: ms
 
+
+class ParseError(Exception):
+    """"Base class for parse exceptions"""
+
+    def __init__(self, source_text):
+        self.source_text = source_text
+
+    def __str__(self):
+        if '\n' in self.source_text:
+            source = '{} lines of text'.format(len(self.source_text))
+        else:
+            source = repr(self.source_text)
+        return '{} in {}'.format(self.problem_description, source)
+
+
 #remove page breaks and other meta data
 def removeMetaData(s):
     """
