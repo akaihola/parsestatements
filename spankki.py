@@ -1,6 +1,6 @@
 # coding=UTF-8
-import re, subprocess, os
 from __future__ import print_function, unicode_literals
+import re, subprocess, os
 
 import cleantransactions
 
