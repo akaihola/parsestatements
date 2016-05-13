@@ -1,0 +1,3 @@
+# Python-Future 0.10.0 introduced the raise_with_traceback() funtion
+# See http://python-future.org/changelog.html#utility-functions-raise-and-exec
+future>=0.10.0

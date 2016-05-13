@@ -1,5 +1,6 @@
 # coding=UTF-8
 import re, subprocess, os
+from future.utils import raise_with_traceback
 
 import cleantransactions
 
@@ -318,23 +319,31 @@ def parseStatementTransactions(transactions):
     
 
     for matcher in iter(matchers):
-        print matcher + ": " + str(len(search(matcher,transactions)))
-    
-    print "Not identified: " + str(len(searchEmpty(transactions)))
-   
+        print('{}: {}'.format(matcher, len(search(matcher, transactions))))
+
+    print('Not identified: {}'.format(len(searchEmpty(transactions))))
+
+
+class StatementParseError(ParseError):
+    problem_description = 'Cannot parse statement'
+
+
 def transactionslookup(openfile, path):
     print "*** Executing pdftotext for: " + path
     statement = subprocess.Popen(["pdftotext", "-raw",path,"-enc", "UTF-8","-"],  stdout=subprocess.PIPE).communicate()[0]
-    print "Parse statement meta data"
-    metadata = parseStatementMetadata(statement,path)
-    print "*** Removing meta data from statement"
-    statement = removeMetaData(statement)
-    print "*** Split to transactions"
-    transactions = splitStatement(statement)
-    print "*** Merge "
-    mergeRawTransactions(transactions,metadata)
-    print "*** Parsing: " + path
-    parseStatementTransactions(transactions)
-    print "*** Cleaning: " + path
-    cleantransactions.cleanData(transactions)
+    try:
+        print "Parse statement meta data"
+        metadata = parseStatementMetadata(statement,path)
+        print "*** Removing meta data from statement"
+        statement = removeMetaData(statement)
+        print "*** Split to transactions"
+        transactions = splitStatement(statement)
+        print "*** Merge "
+        mergeRawTransactions(transactions,metadata)
+        print "*** Parsing: " + path
+        parseStatementTransactions(transactions)
+        print "*** Cleaning: " + path
+        cleantransactions.cleanData(transactions)
+    except ParseError:
+        raise_with_traceback(StatementParseError(path))
     return transactions
