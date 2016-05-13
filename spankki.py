@@ -84,6 +84,12 @@ def removeMetaData(s):
 
 
 #store statement metadata
+
+
+class MetadataParseError(ParseError):
+    problem_description = 'Cannot find statement metadata'
+
+
 def parseStatementMetadata(statement,path):
     #data example
     """
@@ -98,6 +104,8 @@ def parseStatementMetadata(statement,path):
     
     matchRow1 = re.compile(".*KAUSI\s+(?P<StDateStart>[\d\.]+)+\s-\s(?P<StDateEnd>[\d\.]+).*tapahtumista\.\s+(?P<StAccountIban>\w\w[\d\s]+)\s+(?P<StAccountBic>\w+)\s",flags=re.DOTALL)
     m1 = re.match(matchRow1,statement)
+    if not m1:
+        raise MetadataParseError(statement)
         
     #print m1.groupdict()
 
