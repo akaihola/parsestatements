@@ -1,5 +1,6 @@
 # coding=UTF-8
 import re, subprocess, os
+from __future__ import print_function, unicode_literals
 
 import cleantransactions
 
@@ -279,11 +280,11 @@ def parseStatementTransactions(transactions):
                 break 
             #else:
                 #print "No match!:" + str(matcher)  + "\n" + '\n'.join(transaction) + "%%%"
-        if not matched: 
-            print "No match!: \n"  + '\n'.join(transaction)
-        
-    print "*** parsed " + str(matches) + "/" + str(len(transactions)) +  "***"
-    
+        if not matched:
+            print('No match!: \n{}'.format('\n'.join(transaction)))
+
+    print('*** parsed {}/{}***'.format(matches, len(transactions)))
+
 
     #source: http://stackoverflow.com/questions/8653516/python-list-of-dictionaries-search
     #todo: http://docs.python.org/2/library/collections.html, http://stackoverflow.com/questions/5490078/python-counting-repeating-values-of-a-dictionary
@@ -295,23 +296,27 @@ def parseStatementTransactions(transactions):
     
 
     for matcher in iter(matchers):
-        print matcher + ": " + str(len(search(matcher,transactions)))
-    
-    print "Not identified: " + str(len(searchEmpty(transactions)))
-   
+        print('{}: {}'.format(matcher, len(search(matcher, transactions))))
+
+    print('Not identified: {}'.format(len(searchEmpty(transactions))))
+
 def transactionslookup(openfile, path):
-    print "*** Executing pdftotext for: " + path
-    statement = subprocess.Popen(["pdftotext", "-raw",path,"-enc", "UTF-8","-"],  stdout=subprocess.PIPE).communicate()[0]
-    print "Parse statement meta data"
+    print('*** Executing pdftotext for: {}'.format(path))
+    pdftotext_stdout = subprocess.Popen(
+        ["pdftotext", "-raw", path, "-enc", "UTF-8", "-"],
+        stdout=subprocess.PIPE
+    ).communicate()[0]
+    statement = pdftotext_stdout.decode('UTF-8')
+    print('Parse statement meta data')
     metadata = parseStatementMetadata(statement,path)
-    print "*** Removing meta data from statement"
+    print('*** Removing meta data from statement')
     statement = removeMetaData(statement)
-    print "*** Split to transactions"
+    print('*** Split to transactions')
     transactions = splitStatement(statement)
-    print "*** Merge "
+    print('*** Merge ')
     mergeRawTransactions(transactions,metadata)
-    print "*** Parsing: " + path
+    print('*** Parsing: {}'.format(path))
     parseStatementTransactions(transactions)
-    print "*** Cleaning: " + path
+    print('*** Cleaning: {}'.format(path))
     cleantransactions.cleanData(transactions)
     return transactions

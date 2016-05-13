@@ -1,4 +1,5 @@
 # Statement Parser
+from __future__ import print_function, unicode_literals
 
 #built in
 import os.path, json, argparse, csv
@@ -106,16 +107,16 @@ def printplus(obj):
     # Dict
     if isinstance(obj, dict):
         for k, v in sorted(obj.items()):
-            print u'{0}: {1}'.format(k, v)
+            print(u'{0}: {1}'.format(k, v))
 
     # List or tuple            
     elif isinstance(obj, list) or isinstance(obj, tuple):
         for x in obj:
-            print x
+            print(x)
 
     # Other
     else:
-        print obj
+        print(obj)
 
 def report(transactions):
     def search(name, list):
@@ -132,12 +133,13 @@ def report(transactions):
         matchers[transaction["matcher"]]+=1
         statements[transaction["path"]]+=1
 
-    print "=== Transactions per matcher:"
+    print('=== Transactions per matcher:')
     printplus(matchers)
-    print "=== Transactions per bank:"
+    print('=== Transactions per bank:')
     printplus(banks)
-    print "=== Total transactions: "+str(total)
-    print "=== Total statements: " + str(len(statements))
+    print('=== Total transactions: ' + str(total))
+    print('=== Total statements: ' + str(len(statements)))
+
 
 #main
 

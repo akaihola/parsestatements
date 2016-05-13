@@ -10,6 +10,7 @@
 # http://www.fkl.fi/teemasivut/sepa/tekninen_dokumentaatio/
 
 
+from __future__ import print_function, unicode_literals
 import re
 
 class AccountNumberException(Exception):
@@ -100,7 +101,7 @@ def validate_mlf(mlf_s):
     mlf_numbers = map(int, mlf_s)
 
     # 13 first account number digits are multiplied by weights
-    products = map(lambda (a, b): str(a * b), zip(weights, mlf_numbers))
+    products = map(lambda a, b: str(a * b), zip(weights, mlf_numbers))
 
     # products are put together in a single string and the sum of digits is calculated
     total = sum(int(x) for x in ''.join(products))
@@ -144,30 +145,32 @@ def main():
     # examples
 
     old = '123456-785'
-    print 'Account number in old format: {0:s}'.format(old)
-    print 'Machine language format: {0:s}'.format(old_to_mlf(old))
+    print('Account number in old format: {0:s}'.format(old))
+    print('Machine language format: {0:s}'.format(old_to_mlf(old)))
     iban = old_to_iban(old)
-    print 'IBAN: {0:s}'.format(iban)
-    print 'BIC: {0:s}'.format(bic_of_iban(iban))
-    print 'Bank name: {0:s}'.format(bank_name_of_iban(iban))
+    print('IBAN: {0:s}'.format(iban))
+    print('BIC: {0:s}'.format(bic_of_iban(iban)))
+    print('Bank name: {0:s}'.format(bank_name_of_iban(iban)))
 
     real_iban = 'FI3715903000000776'
     result = validate_fi_iban(real_iban)
-    print '{0:s} is {1:s} IBAN'.format(real_iban, 'valid' if result else 'invalid')
+    print('{0:s} is {1:s} IBAN'
+          .format(real_iban, 'valid' if result else 'invalid'))
 
     fake_iban = 'FI3715903000000777'
     result = validate_fi_iban(fake_iban)
-    print '{0:s} is {1:s} IBAN'.format(fake_iban, 'valid' if result else 'invalid')
+    print('{0:s} is {1:s} IBAN'
+          .format(fake_iban, 'valid' if result else 'invalid'))
 
     fake_old = '123457-785'
     result = validate_old(fake_old)
-    print '{0:s} is {1:s}'.format(fake_old, 'valid' if result else 'invalid')
+    print('{0:s} is {1:s}'.format(fake_old, 'valid' if result else 'invalid'))
 
     # error handling example:
     try:
-        print '{0:s} to IBAN: {1:s}'.format(fake_old, old_to_iban(fake_old))
+        print('{0:s} to IBAN: {1:s}'.format(fake_old, old_to_iban(fake_old)))
     except AccountNumberException as e:
-        print 'Unable to convert: {0:s}'.format(e)
+        print('Unable to convert: {0:s}'.format(e))
 
 if __name__ == '__main__':
     main()

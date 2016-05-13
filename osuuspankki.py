@@ -1,4 +1,5 @@
 # coding=UTF-8
+from __future__ import print_function, unicode_literals
 import re
 import time
 import converter
@@ -106,7 +107,7 @@ def parseStatementTransactions(transactions):
         )
 
 
-    print "*** Before Parsing ***"
+    print('*** Before Parsing ***')
 
 
     matches = 0
@@ -114,7 +115,7 @@ def parseStatementTransactions(transactions):
     for i, val in enumerate(transactions):
 
         matched = False
-        print transactions[i]
+        print(transactions[i])
         transaction = transactions[i]['rawTransaction']
         #print "Transaction: " + str(transaction)
 
@@ -144,7 +145,9 @@ def parseStatementTransactions(transactions):
             if not matched:
                 #save matcher for debugging
                 result['matcher'] = "OP NO MATCH"
-                print "Cannot parse description, saved anyway: \"" + transaction[8] + "\""#+";" + transaction[3] + ";" + transaction[4]#\n"  + '\n'.join(transaction)
+                print('Cannot parse description, saved anyway: "{}"'
+                      .format(transaction[8]))
+                # +";" + transaction[3] + ";" + transaction[4]#\n"  + '\n'.join(transaction)
         else:
                 result['matcher'] = "OP EMPTY DESCRIPTION"
 
@@ -177,7 +180,7 @@ def parseStatementTransactions(transactions):
         transactions[i] = dict(transactions[i].items() + result.items())
 
     #debug
-    print "*** Parsed " + str(matches) + "/" + str(len(transactions)) +  "***"
+    print('*** Parsed {}/{}***' .format(matches, len(transactions)))
 
     #source: http://stackoverflow.com/questions/8653516/python-list-of-dictionaries-search
     #todo: http://docs.python.org/2/library/collections.html, http://stackoverflow.com/questions/5490078/python-counting-repeating-values-of-a-dictionary
@@ -188,11 +191,12 @@ def parseStatementTransactions(transactions):
         return [element for element in list if not (element.has_key('matcher')) ]
 
     for matcher in iter(matchers):
-        print matcher + ": " + str(len(search(matcher,transactions)))
-    print "NO MATCH" + ": " + str(len(search("NO MATCH",transactions)))
-    print "EMPTY DESCRIPTION" + ": " + str(len(search("EMPTY DESCRIPTION",transactions)))
+        print('{}: {}'.format(matcher, len(search(matcher, transactions))))
+    print('NO MATCH: {}'.format(len(search('NO MATCH', transactions))))
+    print('EMPTY DESCRIPTION: {}'
+          .format(len(search('EMPTY DESCRIPTION', transactions))))
 
-    print "Not identified: " + str(len(searchEmpty(transactions)))
+    print('Not identified: {}'.format(len(searchEmpty(transactions))))
 
     #@todo: decode back
 
@@ -200,14 +204,14 @@ def parseStatementTransactions(transactions):
 
 #parses openfile in path, extends transcations list with found transaction 
 def transactionslookup(openfile, path):
-    print "*** Reading file: " + path
+    print('*** Reading file: {}'.format(path))
     transactions = readStatement(openfile)
-    print "Gather statement meta data"
+    print('Gather statement meta data')
     metadata = parseStatementMetadata(transactions, path)
-    print "*** Merge metadata and transactions"
+    print('*** Merge metadata and transactions')
     mergeRawTransactions(transactions,metadata)
-    print "*** Parsing transactions: " + path
+    print('*** Parsing transactions: ' + path)
     parseStatementTransactions(transactions)
-    print "*** Cleaning: " + path
+    print('*** Cleaning: ' + path)
     cleantransactions.cleanData(transactions)
     return transactions
